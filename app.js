@@ -7,7 +7,9 @@ const els = {
   loginError: document.querySelector("#loginError"),
   siteTitle: document.querySelector("#siteTitle"),
   chapterMeta: document.querySelector("#chapterMeta"),
+  libraryBtn: document.querySelector("#libraryBtn"),
   chapterSelect: document.querySelector("#chapterSelect"),
+  libraryView: document.querySelector("#libraryView"),
   reader: document.querySelector("#reader"),
   emptyState: document.querySelector("#emptyState"),
   fitBtn: document.querySelector("#fitBtn"),
@@ -22,6 +24,7 @@ const AUTH_PASSWORD_HASH = "3feca854cebffee523348dc87773f7aee2abbe1ad54834f237b2
 const AUTH_SESSION_KEY = "manga-auth-ok";
 
 let manifest = null;
+let currentManga = null;
 
 init();
 
@@ -57,9 +60,18 @@ function bindEvents() {
     window.location.reload();
   });
 
+  els.libraryBtn.addEventListener("click", () => {
+    const url = new URL(window.location.href);
+    url.searchParams.delete("manga");
+    url.searchParams.delete("chapter");
+    window.history.replaceState(null, "", url);
+    renderLibrary();
+  });
+
   els.chapterSelect.addEventListener("change", () => {
     const chapterId = els.chapterSelect.value;
     const url = new URL(window.location.href);
+    if (currentManga) url.searchParams.set("manga", currentManga.id);
     url.searchParams.set("chapter", chapterId);
     window.history.replaceState(null, "", url);
     renderChapter(chapterId);
@@ -113,30 +125,101 @@ function restorePreferences() {
 
 function render() {
   els.siteTitle.textContent = manifest.title || "MANGA Reader";
-  const chapters = Array.isArray(manifest.chapters) ? manifest.chapters : [];
+  const mangaList = getMangaList();
 
-  if (!chapters.length) {
+  if (!mangaList.length) {
+    showEmpty("Nessun manga configurato");
+    return;
+  }
+
+  const params = new URLSearchParams(window.location.search);
+  const requestedManga = params.get("manga");
+  const selectedManga = mangaList.find((item) => item.id === requestedManga);
+
+  if (selectedManga) {
+    openManga(selectedManga.id, params.get("chapter"));
+  } else {
+    renderLibrary();
+  }
+}
+
+function getMangaList() {
+  if (Array.isArray(manifest.manga)) return manifest.manga;
+  if (Array.isArray(manifest.chapters)) {
+    return [{ id: "default", title: manifest.title || "Manga", cover: "", chapters: manifest.chapters }];
+  }
+  return [];
+}
+
+function renderLibrary() {
+  const mangaList = getMangaList();
+  currentManga = null;
+  els.reader.hidden = true;
+  els.emptyState.hidden = true;
+  els.libraryView.hidden = false;
+  els.chapterSelect.hidden = true;
+  els.libraryBtn.hidden = true;
+  els.chapterMeta.textContent = `${mangaList.length} manga disponibili`;
+  els.libraryView.innerHTML = "";
+
+  mangaList.forEach((manga) => {
+    const button = document.createElement("button");
+    button.className = "mangaCard";
+    button.type = "button";
+    button.addEventListener("click", () => {
+      const url = new URL(window.location.href);
+      url.searchParams.set("manga", manga.id);
+      url.searchParams.delete("chapter");
+      window.history.replaceState(null, "", url);
+      openManga(manga.id);
+    });
+
+    const cover = document.createElement("img");
+    cover.src = manga.cover || "";
+    cover.alt = `${manga.title} cover`;
+    cover.loading = "lazy";
+
+    const title = document.createElement("strong");
+    title.textContent = manga.title;
+
+    const meta = document.createElement("span");
+    const pages = manga.chapters.reduce((sum, chapter) => sum + chapter.pages.length, 0);
+    meta.textContent = `${manga.chapters.length} capitoli - ${pages} pagine`;
+
+    button.append(cover, title, meta);
+    els.libraryView.append(button);
+  });
+}
+
+function openManga(mangaId, requestedChapter) {
+  const manga = getMangaList().find((item) => item.id === mangaId);
+  if (!manga || !Array.isArray(manga.chapters) || !manga.chapters.length) {
     showEmpty("Nessun capitolo configurato");
     return;
   }
 
+  currentManga = manga;
+  els.siteTitle.textContent = manga.title;
+  els.libraryView.hidden = true;
+  els.chapterSelect.hidden = false;
+  els.libraryBtn.hidden = false;
   els.chapterSelect.innerHTML = "";
-  chapters.forEach((chapter) => {
+  manga.chapters.forEach((chapter) => {
     const option = document.createElement("option");
     option.value = chapter.id;
     option.textContent = chapter.title;
     els.chapterSelect.append(option);
   });
 
-  const params = new URLSearchParams(window.location.search);
-  const requested = params.get("chapter");
-  const selected = chapters.some((chapter) => chapter.id === requested) ? requested : chapters[0].id;
+  const selected = manga.chapters.some((chapter) => chapter.id === requestedChapter)
+    ? requestedChapter
+    : manga.chapters[0].id;
   els.chapterSelect.value = selected;
   renderChapter(selected);
 }
 
 function renderChapter(chapterId) {
-  const chapter = manifest.chapters.find((item) => item.id === chapterId);
+  const chapter = currentManga?.chapters.find((item) => item.id === chapterId);
   if (!chapter || !Array.isArray(chapter.pages) || !chapter.pages.length) {
     showEmpty("Nessuna immagine trovata");
     return;
@@ -162,6 +245,7 @@ function renderChapter(chapterId) {
 }
 
 function showEmpty(message) {
+  els.libraryView.hidden = true;
   els.reader.hidden = true;
   els.emptyState.hidden = false;
   els.chapterMeta.textContent = message;

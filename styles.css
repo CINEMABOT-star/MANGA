@@ -197,6 +197,44 @@ main {
   padding: 18px 0 72px;
 }
 
+.libraryView {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 16px;
+  width: min(1040px, calc(100% - 28px));
+  margin: 0 auto;
+}
+
+.mangaCard {
+  display: grid;
+  gap: 10px;
+  align-content: start;
+  height: 100%;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  padding: 10px;
+  text-align: left;
+}
+
+.mangaCard img {
+  width: 100%;
+  aspect-ratio: 193 / 278;
+  border-radius: 6px;
+  background: #090a0c;
+  object-fit: cover;
+}
+
+.mangaCard strong {
+  line-height: 1.25;
+}
+
+.mangaCard span {
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.35;
+}
+
 .reader {
   width: min(var(--page-width), 100%);
   margin: 0 auto;
