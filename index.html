@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MANGA Reader</title>
+    <link rel="stylesheet" href="./styles.css" />
+    <script defer src="./app.js"></script>
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand">
+        <span class="mark">M</span>
+        <div>
+          <h1 id="siteTitle">MANGA Reader</h1>
+          <p id="chapterMeta">Caricamento...</p>
+        </div>
+      </div>
+
+      <nav class="toolbar" aria-label="Controlli lettura">
+        <select id="chapterSelect" aria-label="Capitolo"></select>
+        <button id="fitBtn" type="button" title="Cambia larghezza">Fit</button>
+        <button id="themeBtn" type="button" title="Cambia tema">Tema</button>
+      </nav>
+    </header>
+
+    <div class="progressWrap" aria-hidden="true">
+      <div id="progressBar" class="progressBar"></div>
+    </div>
+
+    <main>
+      <section id="reader" class="reader" aria-label="Pagine webtoon"></section>
+
+      <section id="emptyState" class="emptyState" hidden>
+        <h2>Nessuna immagine trovata</h2>
+        <p>
+          Metti le immagini in <code>chapters/capitolo-1</code>, poi esegui
+          <code>tools\generate-manifest.ps1</code> e pubblica le modifiche.
+        </p>
+      </section>
+    </main>
+
+    <button id="topBtn" class="topBtn" type="button" title="Torna su">Su</button>
+  </body>
+</html>
