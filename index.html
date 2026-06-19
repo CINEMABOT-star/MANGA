@@ -8,6 +8,27 @@
     <script defer src="./app.js"></script>
   </head>
   <body>
+    <section id="loginView" class="loginView" aria-label="Accesso">
+      <form id="loginForm" class="loginBox">
+        <span class="mark loginMark">M</span>
+        <h1>Accesso lettura</h1>
+        <p>Inserisci le credenziali per aprire il reader.</p>
+        <label for="usernameInput">Username</label>
+        <input id="usernameInput" name="username" type="text" autocomplete="username" required />
+        <label for="passwordInput">Password</label>
+        <input
+          id="passwordInput"
+          name="password"
+          type="password"
+          autocomplete="current-password"
+          required
+        />
+        <button type="submit">Entra</button>
+        <p id="loginError" class="loginError" role="alert" hidden>Credenziali non valide.</p>
+      </form>
+    </section>
+
+    <div id="appView" hidden>
     <header class="topbar">
       <div class="brand">
         <span class="mark">M</span>
@@ -21,6 +42,7 @@
         <select id="chapterSelect" aria-label="Capitolo"></select>
         <button id="fitBtn" type="button" title="Cambia larghezza">Fit</button>
         <button id="themeBtn" type="button" title="Cambia tema">Tema</button>
+        <button id="logoutBtn" type="button" title="Esci">Esci</button>
       </nav>
     </header>
 
@@ -41,5 +63,6 @@
     </main>
 
     <button id="topBtn" class="topBtn" type="button" title="Torna su">Su</button>
+    </div>
   </body>
 </html>

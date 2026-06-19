@@ -38,12 +38,14 @@ body {
 }
 
 button,
-select {
+select,
+input {
   font: inherit;
 }
 
 button,
-select {
+select,
+input {
   border: 1px solid var(--line);
   border-radius: 8px;
   background: var(--surface-2);
@@ -62,9 +64,58 @@ select:hover {
 }
 
 button:focus-visible,
-select:focus-visible {
+select:focus-visible,
+input:focus-visible {
   outline: 3px solid var(--accent-2);
   outline-offset: 2px;
+}
+
+.loginView {
+  display: grid;
+  min-height: 100vh;
+  place-items: center;
+  padding: 20px;
+}
+
+.loginBox {
+  display: grid;
+  width: min(420px, 100%);
+  gap: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  padding: 24px;
+  box-shadow: 0 22px 80px rgba(0, 0, 0, 0.28);
+}
+
+.loginBox h1 {
+  font-size: 1.35rem;
+  white-space: normal;
+}
+
+.loginBox p {
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.loginBox label {
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.loginBox button {
+  margin-top: 4px;
+  background: var(--accent);
+  color: white;
+}
+
+.loginMark {
+  width: 48px;
+  height: 48px;
+}
+
+.loginError {
+  color: #ff9aa9;
 }
 
 .topbar {

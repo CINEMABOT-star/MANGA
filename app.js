@@ -1,4 +1,10 @@
 const els = {
+  loginView: document.querySelector("#loginView"),
+  appView: document.querySelector("#appView"),
+  loginForm: document.querySelector("#loginForm"),
+  usernameInput: document.querySelector("#usernameInput"),
+  passwordInput: document.querySelector("#passwordInput"),
+  loginError: document.querySelector("#loginError"),
   siteTitle: document.querySelector("#siteTitle"),
   chapterMeta: document.querySelector("#chapterMeta"),
   chapterSelect: document.querySelector("#chapterSelect"),
@@ -6,9 +12,14 @@ const els = {
   emptyState: document.querySelector("#emptyState"),
   fitBtn: document.querySelector("#fitBtn"),
   themeBtn: document.querySelector("#themeBtn"),
+  logoutBtn: document.querySelector("#logoutBtn"),
   topBtn: document.querySelector("#topBtn"),
   progressBar: document.querySelector("#progressBar"),
 };
+
+const AUTH_USER = "matteosofia";
+const AUTH_PASSWORD_HASH = "3feca854cebffee523348dc87773f7aee2abbe1ad54834f237b24102dab2e988";
+const AUTH_SESSION_KEY = "manga-auth-ok";
 
 let manifest = null;
 
@@ -17,7 +28,17 @@ init();
 async function init() {
   restorePreferences();
   bindEvents();
+  if (sessionStorage.getItem(AUTH_SESSION_KEY) !== "1") {
+    els.loginView.hidden = false;
+    els.appView.hidden = true;
+    return;
+  }
+  await unlockReader();
+}
 
+async function unlockReader() {
+  els.loginView.hidden = true;
+  els.appView.hidden = false;
   try {
     const response = await fetch(`./manifest.json?cache=${Date.now()}`);
     if (!response.ok) throw new Error("Manifest non trovato");
@@ -29,6 +50,13 @@ async function init() {
 }
 
 function bindEvents() {
+  els.loginForm.addEventListener("submit", handleLogin);
+
+  els.logoutBtn.addEventListener("click", () => {
+    sessionStorage.removeItem(AUTH_SESSION_KEY);
+    window.location.reload();
+  });
+
   els.chapterSelect.addEventListener("change", () => {
     const chapterId = els.chapterSelect.value;
     const url = new URL(window.location.href);
@@ -49,6 +77,29 @@ function bindEvents() {
 
   els.topBtn.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
   window.addEventListener("scroll", updateProgress, { passive: true });
+}
+
+async function handleLogin(event) {
+  event.preventDefault();
+  const username = els.usernameInput.value.trim();
+  const passwordHash = await sha256(els.passwordInput.value);
+
+  if (username === AUTH_USER && passwordHash === AUTH_PASSWORD_HASH) {
+    sessionStorage.setItem(AUTH_SESSION_KEY, "1");
+    els.passwordInput.value = "";
+    els.loginError.hidden = true;
+    await unlockReader();
+    return;
+  }
+
+  els.loginError.hidden = false;
+  els.passwordInput.select();
+}
+
+async function sha256(value) {
+  const bytes = new TextEncoder().encode(value);
+  const hash = await crypto.subtle.digest("SHA-256", bytes);
+  return [...new Uint8Array(hash)].map((byte) => byte.toString(16).padStart(2, "0")).join("");
 }
 
 function restorePreferences() {
