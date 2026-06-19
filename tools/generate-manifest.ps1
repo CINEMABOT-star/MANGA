@@ -48,5 +48,7 @@ $manifest = [ordered]@{
   manga = @($manga)
 }
 
-$manifest | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath $manifestPath -Encoding utf8
+$json = $manifest | ConvertTo-Json -Depth 6
+$encoding = New-Object System.Text.UTF8Encoding($false)
+[System.IO.File]::WriteAllText($manifestPath, $json, $encoding)
 Write-Output "Manifest aggiornato: $manifestPath"
