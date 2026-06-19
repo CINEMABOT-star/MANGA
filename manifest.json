@@ -1,10 +1,189 @@
-{
-  "title": "MANGA Reader",
-  "chapters": [
-    {
-      "id": "capitolo-1",
-      "title": "Capitolo 1",
-      "pages": []
-    }
-  ]
+﻿{
+    "title":  "Pure Perverted Love",
+    "chapters":  [
+                     {
+                         "id":  "chapter-1",
+                         "title":  "chapter 1",
+                         "pages":  [
+                                       "chapters/chapter-1/001.jpg",
+                                       "chapters/chapter-1/002.jpg",
+                                       "chapters/chapter-1/003.jpg",
+                                       "chapters/chapter-1/004.jpg",
+                                       "chapters/chapter-1/005.jpg",
+                                       "chapters/chapter-1/006.jpg",
+                                       "chapters/chapter-1/007.jpg",
+                                       "chapters/chapter-1/008.jpg",
+                                       "chapters/chapter-1/009.jpg",
+                                       "chapters/chapter-1/010.jpg",
+                                       "chapters/chapter-1/011.jpg",
+                                       "chapters/chapter-1/012.jpg",
+                                       "chapters/chapter-1/013.jpg",
+                                       "chapters/chapter-1/014.jpg",
+                                       "chapters/chapter-1/015.jpg",
+                                       "chapters/chapter-1/016.jpg",
+                                       "chapters/chapter-1/017.jpg",
+                                       "chapters/chapter-1/018.jpg"
+                                   ]
+                     },
+                     {
+                         "id":  "chapter-2",
+                         "title":  "chapter 2",
+                         "pages":  [
+                                       "chapters/chapter-2/001.jpg",
+                                       "chapters/chapter-2/002.jpg",
+                                       "chapters/chapter-2/003.jpg",
+                                       "chapters/chapter-2/004.jpg",
+                                       "chapters/chapter-2/005.jpg",
+                                       "chapters/chapter-2/006.jpg",
+                                       "chapters/chapter-2/007.jpg",
+                                       "chapters/chapter-2/008.jpg",
+                                       "chapters/chapter-2/009.jpg",
+                                       "chapters/chapter-2/010.jpg",
+                                       "chapters/chapter-2/011.jpg",
+                                       "chapters/chapter-2/012.jpg"
+                                   ]
+                     },
+                     {
+                         "id":  "chapter-3",
+                         "title":  "chapter 3",
+                         "pages":  [
+                                       "chapters/chapter-3/001.jpg",
+                                       "chapters/chapter-3/002.jpg",
+                                       "chapters/chapter-3/003.jpg",
+                                       "chapters/chapter-3/004.jpg",
+                                       "chapters/chapter-3/005.jpg",
+                                       "chapters/chapter-3/006.jpg",
+                                       "chapters/chapter-3/007.jpg",
+                                       "chapters/chapter-3/008.jpg",
+                                       "chapters/chapter-3/009.jpg",
+                                       "chapters/chapter-3/010.jpg",
+                                       "chapters/chapter-3/011.jpg",
+                                       "chapters/chapter-3/012.jpg",
+                                       "chapters/chapter-3/013.jpg",
+                                       "chapters/chapter-3/014.jpg"
+                                   ]
+                     },
+                     {
+                         "id":  "chapter-4",
+                         "title":  "chapter 4",
+                         "pages":  [
+                                       "chapters/chapter-4/001.jpg",
+                                       "chapters/chapter-4/002.jpg",
+                                       "chapters/chapter-4/003.jpg",
+                                       "chapters/chapter-4/004.jpg",
+                                       "chapters/chapter-4/005.jpg",
+                                       "chapters/chapter-4/006.jpg",
+                                       "chapters/chapter-4/007.jpg",
+                                       "chapters/chapter-4/008.jpg",
+                                       "chapters/chapter-4/009.jpg",
+                                       "chapters/chapter-4/010.jpg",
+                                       "chapters/chapter-4/011.jpg",
+                                       "chapters/chapter-4/012.jpg",
+                                       "chapters/chapter-4/013.jpg",
+                                       "chapters/chapter-4/014.jpg"
+                                   ]
+                     },
+                     {
+                         "id":  "chapter-5",
+                         "title":  "chapter 5",
+                         "pages":  [
+                                       "chapters/chapter-5/001.jpg",
+                                       "chapters/chapter-5/002.jpg",
+                                       "chapters/chapter-5/003.jpg",
+                                       "chapters/chapter-5/004.jpg",
+                                       "chapters/chapter-5/005.jpg",
+                                       "chapters/chapter-5/006.jpg",
+                                       "chapters/chapter-5/007.jpg",
+                                       "chapters/chapter-5/008.jpg",
+                                       "chapters/chapter-5/009.jpg",
+                                       "chapters/chapter-5/010.jpg",
+                                       "chapters/chapter-5/011.jpg",
+                                       "chapters/chapter-5/012.jpg",
+                                       "chapters/chapter-5/013.jpg",
+                                       "chapters/chapter-5/014.jpg",
+                                       "chapters/chapter-5/015.jpg"
+                                   ]
+                     },
+                     {
+                         "id":  "chapter-6",
+                         "title":  "chapter 6",
+                         "pages":  [
+                                       "chapters/chapter-6/001.jpg",
+                                       "chapters/chapter-6/002.jpg",
+                                       "chapters/chapter-6/003.jpg",
+                                       "chapters/chapter-6/004.jpg",
+                                       "chapters/chapter-6/005.jpg",
+                                       "chapters/chapter-6/006.jpg",
+                                       "chapters/chapter-6/007.jpg",
+                                       "chapters/chapter-6/008.jpg",
+                                       "chapters/chapter-6/009.jpg",
+                                       "chapters/chapter-6/010.jpg",
+                                       "chapters/chapter-6/011.jpg",
+                                       "chapters/chapter-6/012.jpg",
+                                       "chapters/chapter-6/013.jpg",
+                                       "chapters/chapter-6/014.jpg",
+                                       "chapters/chapter-6/015.jpg"
+                                   ]
+                     },
+                     {
+                         "id":  "chapter-7",
+                         "title":  "chapter 7",
+                         "pages":  [
+                                       "chapters/chapter-7/001.jpg",
+                                       "chapters/chapter-7/002.jpg",
+                                       "chapters/chapter-7/003.jpg",
+                                       "chapters/chapter-7/004.jpg",
+                                       "chapters/chapter-7/005.jpg",
+                                       "chapters/chapter-7/006.jpg",
+                                       "chapters/chapter-7/007.jpg",
+                                       "chapters/chapter-7/008.jpg",
+                                       "chapters/chapter-7/009.jpg",
+                                       "chapters/chapter-7/010.jpg",
+                                       "chapters/chapter-7/011.jpg",
+                                       "chapters/chapter-7/012.jpg",
+                                       "chapters/chapter-7/013.jpg",
+                                       "chapters/chapter-7/014.jpg"
+                                   ]
+                     },
+                     {
+                         "id":  "chapter-8",
+                         "title":  "chapter 8",
+                         "pages":  [
+                                       "chapters/chapter-8/001.jpg",
+                                       "chapters/chapter-8/002.jpg",
+                                       "chapters/chapter-8/003.jpg",
+                                       "chapters/chapter-8/004.jpg",
+                                       "chapters/chapter-8/005.jpg",
+                                       "chapters/chapter-8/006.jpg",
+                                       "chapters/chapter-8/007.jpg",
+                                       "chapters/chapter-8/008.jpg",
+                                       "chapters/chapter-8/009.jpg",
+                                       "chapters/chapter-8/010.jpg",
+                                       "chapters/chapter-8/011.jpg",
+                                       "chapters/chapter-8/012.jpg",
+                                       "chapters/chapter-8/013.jpg",
+                                       "chapters/chapter-8/014.jpg"
+                                   ]
+                     },
+                     {
+                         "id":  "chapter-9",
+                         "title":  "chapter 9",
+                         "pages":  [
+                                       "chapters/chapter-9/001.jpg",
+                                       "chapters/chapter-9/002.jpg",
+                                       "chapters/chapter-9/003.jpg",
+                                       "chapters/chapter-9/004.jpg",
+                                       "chapters/chapter-9/005.jpg",
+                                       "chapters/chapter-9/006.jpg",
+                                       "chapters/chapter-9/007.jpg",
+                                       "chapters/chapter-9/008.jpg",
+                                       "chapters/chapter-9/009.jpg",
+                                       "chapters/chapter-9/010.jpg",
+                                       "chapters/chapter-9/011.jpg",
+                                       "chapters/chapter-9/012.jpg",
+                                       "chapters/chapter-9/013.jpg",
+                                       "chapters/chapter-9/014.jpg"
+                                   ]
+                     }
+                 ]
 }

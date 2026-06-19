@@ -1,4 +1,4 @@
-# MANGA Reader
+# Pure Perverted Love Reader
 
 Sito statico per leggere webtoon online tramite GitHub Pages.
 

@@ -23,7 +23,7 @@ $chapters = Get-ChildItem -LiteralPath $chaptersRoot -Directory | Sort-Object Na
 }
 
 $manifest = [ordered]@{
-  title = "MANGA Reader"
+  title = "Pure Perverted Love"
   chapters = @($chapters)
 }
 
