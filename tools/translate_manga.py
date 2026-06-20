@@ -51,7 +51,14 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--padding", type=int, default=8, help="Padding dei box tradotti.")
     parser.add_argument("--quality", type=int, default=92, help="Qualita JPEG output.")
     parser.add_argument("--limit", type=int, default=0, help="Numero massimo immagini da processare per test.")
+    parser.add_argument("--chapter-filter", default="", help="Processa solo percorsi che contengono questo testo.")
     parser.add_argument("--overwrite", action="store_true", help="Rigenera anche immagini gia tradotte.")
+    parser.add_argument(
+        "--mode",
+        choices=("bubble", "full"),
+        default="bubble",
+        help="bubble traduce solo bolle bianche; full usa OCR su tutta pagina.",
+    )
     parser.add_argument("--cache", default="", help="File cache traduzioni JSON. Default: output/.translation-cache.json")
     parser.add_argument("--font", default="", help="Percorso font TTF opzionale.")
     parser.add_argument("--cpu", action="store_true", help="Forza EasyOCR su CPU.")
@@ -74,6 +81,8 @@ def main() -> None:
     font_path = find_font(args.font)
 
     images = collect_images(source_root)
+    if args.chapter_filter:
+        images = [path for path in images if args.chapter_filter.lower() in str(path.relative_to(source_root)).lower()]
     if args.limit > 0:
         images = images[: args.limit]
 
@@ -103,6 +112,7 @@ def main() -> None:
                 min_confidence=args.min_confidence,
                 padding=args.padding,
                 quality=args.quality,
+                mode=args.mode,
             )
         except Exception as exc:
             print(f"  ERRORE: {exc}")
@@ -137,24 +147,111 @@ def translate_image(
     min_confidence: float,
     padding: int,
     quality: int,
+    mode: str,
 ) -> None:
     image_cv = cv2.imdecode(np.fromfile(str(image_path), dtype=np.uint8), cv2.IMREAD_COLOR)
     if image_cv is None:
         raise ValueError("immagine non leggibile")
 
-    results = reader.readtext(image_cv, paragraph=True, detail=1)
-    boxes = normalize_results(results, min_confidence)
-
     image = Image.open(image_path).convert("RGB")
     draw = ImageDraw.Draw(image)
 
-    for box in boxes:
-        translated = translate_cached(translator, cache, box.text)
-        if not translated:
-            continue
-        paint_translation(draw, image.size, box, translated, font_path, padding)
+    if mode == "bubble":
+        bubble_boxes = detect_speech_bubbles(image_cv)
+        for bounds in bubble_boxes:
+            text = ocr_crop(reader, image_cv, bounds, min_confidence)
+            translated = translate_cached(translator, cache, text) if text else ""
+            if translated:
+                paint_bubble_translation(draw, bounds, translated, font_path, padding)
+    else:
+        results = reader.readtext(image_cv, paragraph=True, detail=1)
+        boxes = normalize_results(results, min_confidence)
+        for box in boxes:
+            translated = translate_cached(translator, cache, box.text)
+            if translated:
+                paint_translation(draw, image.size, box, translated, font_path, padding)
 
     image.save(target_path, "JPEG", quality=quality, optimize=True)
+
+
+def detect_speech_bubbles(image_cv: np.ndarray) -> list[tuple[int, int, int, int]]:
+    height, width = image_cv.shape[:2]
+    gray = cv2.cvtColor(image_cv, cv2.COLOR_BGR2GRAY)
+    _, mask = cv2.threshold(gray, 232, 255, cv2.THRESH_BINARY)
+
+    kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (13, 13))
+    mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel, iterations=2)
+    mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel, iterations=1)
+
+    contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    boxes: list[tuple[int, int, int, int]] = []
+    image_area = width * height
+
+    for contour in contours:
+        x, y, w, h = cv2.boundingRect(contour)
+        area = w * h
+        if area < 1800:
+            continue
+        if area > image_area * 0.12:
+            continue
+        if w < 45 or h < 24:
+            continue
+        if w / max(h, 1) > 5.5 or h / max(w, 1) > 4.2:
+            continue
+
+        roi = mask[y : y + h, x : x + w]
+        fill_ratio = cv2.countNonZero(roi) / max(area, 1)
+        contour_fill = cv2.contourArea(contour) / max(area, 1)
+        if fill_ratio < 0.78 or contour_fill < 0.76:
+            continue
+
+        boxes.append((x, y, x + w, y + h))
+
+    return merge_boxes(sorted(boxes, key=lambda item: (item[1], item[0])))
+
+
+def merge_boxes(boxes: list[tuple[int, int, int, int]]) -> list[tuple[int, int, int, int]]:
+    merged: list[tuple[int, int, int, int]] = []
+    for box in boxes:
+        matched = False
+        for index, existing in enumerate(merged):
+            if boxes_overlap_or_touch(existing, box, margin=16):
+                merged[index] = (
+                    min(existing[0], box[0]),
+                    min(existing[1], box[1]),
+                    max(existing[2], box[2]),
+                    max(existing[3], box[3]),
+                )
+                matched = True
+                break
+        if not matched:
+            merged.append(box)
+    return sorted(merged, key=lambda item: (item[1], item[0]))
+
+
+def boxes_overlap_or_touch(a: tuple[int, int, int, int], b: tuple[int, int, int, int], margin: int) -> bool:
+    return not (
+        a[2] + margin < b[0]
+        or b[2] + margin < a[0]
+        or a[3] + margin < b[1]
+        or b[3] + margin < a[1]
+    )
+
+
+def ocr_crop(
+    reader: easyocr.Reader,
+    image_cv: np.ndarray,
+    bounds: tuple[int, int, int, int],
+    min_confidence: float,
+) -> str:
+    x0, y0, x1, y1 = bounds
+    pad = 6
+    height, width = image_cv.shape[:2]
+    crop = image_cv[max(0, y0 - pad) : min(height, y1 + pad), max(0, x0 - pad) : min(width, x1 + pad)]
+    results = reader.readtext(crop, paragraph=True, detail=1)
+    lines = normalize_results(results, min_confidence)
+    text = " ".join(line.text for line in lines)
+    return clean_text(text)
 
 
 def normalize_results(results: list, min_confidence: float) -> list[TextBox]:
@@ -233,16 +330,49 @@ def paint_translation(
         y += line_height + 2
 
 
+def paint_bubble_translation(
+    draw: ImageDraw.ImageDraw,
+    bounds: tuple[int, int, int, int],
+    translated: str,
+    font_path: Path,
+    padding: int,
+) -> None:
+    left, top, right, bottom = bounds
+    left += max(2, padding // 2)
+    top += max(2, padding // 2)
+    right -= max(2, padding // 2)
+    bottom -= max(2, padding // 2)
+    box_width = max(20, right - left)
+    box_height = max(16, bottom - top)
+
+    draw.rounded_rectangle((left, top, right, bottom), radius=max(10, min(box_width, box_height) // 4), fill=(255, 255, 255))
+    font, lines = fit_text(translated, font_path, box_width - 10, box_height - 8)
+    line_heights = [text_size(draw, line, font)[1] for line in lines]
+    total_height = sum(line_heights) + max(0, len(lines) - 1) * 2
+    y = top + max(2, (box_height - total_height) / 2)
+
+    for line, line_height in zip(lines, line_heights):
+        line_width = text_size(draw, line, font)[0]
+        x = left + max(2, (box_width - line_width) / 2)
+        draw.text((x, y), line, fill=(8, 8, 8), font=font)
+        y += line_height + 2
+
+
 def fit_text(text: str, font_path: Path, max_width: int, max_height: int) -> tuple[ImageFont.FreeTypeFont, list[str]]:
-    for size in range(34, 8, -1):
+    probe = Image.new("RGB", (10, 10))
+    probe_draw = ImageDraw.Draw(probe)
+
+    for size in range(26, 8, -1):
         font = ImageFont.truetype(str(font_path), size=size)
-        approx_chars = max(4, math.floor(max_width / max(size * 0.55, 1)))
-        lines = wrap_text(text, approx_chars)
-        if len(lines) > 6:
-            continue
-        estimated_height = len(lines) * (size + 2)
-        if estimated_height <= max_height:
-            return font, lines
+        for approx_chars in range(max(4, math.floor(max_width / max(size * 0.64, 1))), 3, -1):
+            lines = wrap_text(text, approx_chars)
+            if len(lines) > 7:
+                continue
+            widths = [text_size(probe_draw, line, font)[0] for line in lines]
+            heights = [text_size(probe_draw, line, font)[1] for line in lines]
+            total_height = sum(heights) + max(0, len(lines) - 1) * 2
+            if max(widths, default=0) <= max_width and total_height <= max_height:
+                return font, lines
 
     font = ImageFont.truetype(str(font_path), size=9)
     return font, wrap_text(text, max(4, math.floor(max_width / 5)))
