@@ -45,14 +45,6 @@ Testa poche pagine:
 py .\tools\translate_manga.py --input "C:\Users\iamdr\Documents\Mangas\Someone Stop Her! (Uncensored)" --output "C:\Users\iamdr\Documents\Mangas\TRADOTTI\Someone Stop Her! (Uncensored)" --limit 5 --cpu
 ```
 
-Di default il tool usa `--mode bubble`, cioe traduce solo le bolle bianche e ignora effetti sonori, insegne e scritte fuori dai dialoghi.
-
-Per testare solo un capitolo:
-
-```powershell
-py .\tools\translate_manga.py --input "C:\Users\iamdr\Documents\Mangas\Someone Stop Her! (Uncensored)" --output "C:\Users\iamdr\Documents\Mangas\TRADOTTI_TEST\Someone Stop Her! (Uncensored)" --chapter-filter "Chapter 1" --limit 2 --cpu --overwrite
-```
-
 Traduci tutto:
 
 ```powershell
