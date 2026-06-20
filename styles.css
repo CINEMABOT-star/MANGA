@@ -193,17 +193,6 @@ h1 {
   background: linear-gradient(90deg, var(--accent), var(--accent-2));
 }
 
-.translateStatus {
-  position: sticky;
-  top: 70px;
-  z-index: 4;
-  border-bottom: 1px solid var(--line);
-  background: color-mix(in srgb, var(--surface) 96%, transparent);
-  color: var(--muted);
-  padding: 8px clamp(14px, 4vw, 34px);
-  font-size: 0.9rem;
-}
-
 main {
   padding: 18px 0 72px;
 }
@@ -256,11 +245,6 @@ main {
   --page-width: 1024px;
 }
 
-.pageFrame {
-  position: relative;
-  width: 100%;
-}
-
 .page {
   display: block;
   width: 100%;
@@ -269,43 +253,8 @@ main {
   background: #0b0c0e;
 }
 
-.pageFrame + .pageFrame {
+.page + .page {
   margin-top: 0;
-}
-
-.translationLayer {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-}
-
-.bubbleText {
-  position: absolute;
-  display: grid;
-  place-items: center;
-  overflow: hidden;
-  border-radius: 7px;
-  background: rgba(255, 255, 255, 0.88);
-  color: #161515;
-  padding: 3px 5px;
-  text-align: center;
-  font-weight: 750;
-  line-height: 1.08;
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.12);
-  text-wrap: balance;
-}
-
-.pageFrame[data-translation="pending"]::after,
-.pageFrame[data-translation="working"]::after {
-  position: absolute;
-  right: 8px;
-  top: 8px;
-  border-radius: 999px;
-  background: rgba(0, 0, 0, 0.72);
-  color: white;
-  content: attr(data-label);
-  font-size: 0.78rem;
-  padding: 5px 8px;
 }
 
 .emptyState {
@@ -359,9 +308,5 @@ code {
 
   .progressWrap {
     top: 122px;
-  }
-
-  .translateStatus {
-    top: 125px;
   }
 }
