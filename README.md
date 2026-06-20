@@ -29,26 +29,3 @@ git push
 ```
 
 Il link GitHub Pages resta sempre lo stesso.
-
-## Tradurre immagini sul PC
-
-Installa le dipendenze:
-
-```powershell
-cd C:\Users\iamdr\Desktop\MANGA
-py -m pip install -r .\tools\requirements-translate.txt
-```
-
-Testa poche pagine:
-
-```powershell
-py .\tools\translate_manga.py --input "C:\Users\iamdr\Documents\Mangas\Someone Stop Her! (Uncensored)" --output "C:\Users\iamdr\Documents\Mangas\TRADOTTI\Someone Stop Her! (Uncensored)" --limit 5 --cpu
-```
-
-Traduci tutto:
-
-```powershell
-py .\tools\translate_manga.py --input "C:\Users\iamdr\Documents\Mangas\Someone Stop Her! (Uncensored)" --output "C:\Users\iamdr\Documents\Mangas\TRADOTTI\Someone Stop Her! (Uncensored)" --cpu
-```
-
-Il tool crea una copia tradotta delle immagini. Dopo il controllo qualitativo, si puo importare quella cartella nel sito e pubblicarla.
