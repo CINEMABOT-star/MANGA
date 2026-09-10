@@ -4,15 +4,31 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>MANGA Reader</title>
-    <meta name="theme-color" content="#e85d75" />
-    <link rel="icon" href="./ebook-icon.svg" type="image/svg+xml" />
-    <link rel="apple-touch-icon" href="./ebook-icon.svg" />
-    <link rel="manifest" href="./site.webmanifest" />
     <link rel="stylesheet" href="./styles.css" />
     <script defer src="./app.js"></script>
   </head>
   <body>
-    <div id="appView">
+    <section id="loginView" class="loginView" aria-label="Accesso">
+      <form id="loginForm" class="loginBox">
+        <span class="mark loginMark">M</span>
+        <h1>Accesso lettura</h1>
+        <p>Inserisci le credenziali per aprire il reader.</p>
+        <label for="usernameInput">Username</label>
+        <input id="usernameInput" name="username" type="text" autocomplete="username" required />
+        <label for="passwordInput">Password</label>
+        <input
+          id="passwordInput"
+          name="password"
+          type="password"
+          autocomplete="current-password"
+          required
+        />
+        <button type="submit">Entra</button>
+        <p id="loginError" class="loginError" role="alert" hidden>Credenziali non valide.</p>
+      </form>
+    </section>
+
+    <div id="appView" hidden>
     <header class="topbar">
       <div class="brand">
         <span class="mark">M</span>
@@ -27,7 +43,7 @@
         <select id="chapterSelect" aria-label="Capitolo"></select>
         <button id="fitBtn" type="button" title="Cambia larghezza">Fit</button>
         <button id="themeBtn" type="button" title="Cambia tema">Tema</button>
-        <button id="bookmarkBtn" type="button" title="Salva la posizione">Segnalibro</button>
+        <button id="logoutBtn" type="button" title="Esci">Esci</button>
       </nav>
     </header>
 
