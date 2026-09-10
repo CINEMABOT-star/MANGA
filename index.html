@@ -5,8 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>MANGA Reader</title>
     <link rel="stylesheet" href="./styles.css" />
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="./supabase-config.js"></script>
     <script defer src="./app.js"></script>
   </head>
   <body>
@@ -14,9 +12,9 @@
       <form id="loginForm" class="loginBox">
         <span class="mark loginMark">M</span>
         <h1>Accesso lettura</h1>
-        <p>Accedi per sincronizzare letture e segnalibri su tutti i tuoi dispositivi.</p>
-        <label for="usernameInput">Email</label>
-        <input id="usernameInput" name="username" type="email" autocomplete="username" required />
+        <p>Inserisci le credenziali per aprire il reader.</p>
+        <label for="usernameInput">Username</label>
+        <input id="usernameInput" name="username" type="text" autocomplete="username" required />
         <label for="passwordInput">Password</label>
         <input
           id="passwordInput"
@@ -26,7 +24,6 @@
           required
         />
         <button type="submit">Entra</button>
-        <button id="registerBtn" type="button">Crea account</button>
         <p id="loginError" class="loginError" role="alert" hidden>Credenziali non valide.</p>
       </form>
     </section>
@@ -46,7 +43,6 @@
         <select id="chapterSelect" aria-label="Capitolo"></select>
         <button id="fitBtn" type="button" title="Cambia larghezza">Fit</button>
         <button id="themeBtn" type="button" title="Cambia tema">Tema</button>
-        <button id="bookmarkBtn" type="button" title="Salva segnalibro">Segnalibro</button>
         <button id="logoutBtn" type="button" title="Esci">Esci</button>
       </nav>
     </header>
