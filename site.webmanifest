@@ -1,0 +1,16 @@
+{
+  "name": "MANGA Reader",
+  "short_name": "MANGA",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#101113",
+  "theme_color": "#e85d75",
+  "icons": [
+    {
+      "src": "./ebook-icon.svg",
+      "sizes": "180x180",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
