@@ -3,8 +3,6 @@ const els = {
   appView: document.querySelector("#appView"),
   loginForm: document.querySelector("#loginForm"),
   usernameInput: document.querySelector("#usernameInput"),
-  passwordInput: document.querySelector("#passwordInput"),
-  registerBtn: document.querySelector("#registerBtn"),
   loginError: document.querySelector("#loginError"),
   siteTitle: document.querySelector("#siteTitle"),
   chapterMeta: document.querySelector("#chapterMeta"),
@@ -31,7 +29,7 @@ const supabase = config && window.supabase
 
 let manifest = null;
 let currentManga = null;
-let currentUser = null;
+let currentProfileName = localStorage.getItem("manga-profile-name");
 
 init();
 
@@ -42,9 +40,7 @@ async function init() {
     showLoginError("Configura Supabase prima di usare l'accesso online.");
     return;
   }
-  const { data } = await supabase.auth.getSession();
-  currentUser = data.session?.user || null;
-  if (!currentUser) {
+  if (!currentProfileName) {
     els.loginView.hidden = false;
     els.appView.hidden = true;
     return;
@@ -67,9 +63,8 @@ async function unlockReader() {
 
 function bindEvents() {
   els.loginForm.addEventListener("submit", handleLogin);
-  els.registerBtn.addEventListener("click", handleRegister);
   els.logoutBtn.addEventListener("click", async () => {
-    await supabase.auth.signOut();
+    localStorage.removeItem("manga-profile-name");
     window.location.reload();
   });
   els.libraryBtn.addEventListener("click", () => {
@@ -102,35 +97,13 @@ function bindEvents() {
 
 async function handleLogin(event) {
   event.preventDefault();
-  const { data, error } = await supabase.auth.signInWithPassword({
-    email: els.usernameInput.value.trim(),
-    password: els.passwordInput.value,
-  });
-  if (error) {
-    showLoginError("Email o password non validi.");
-    els.passwordInput.select();
+  const name = els.usernameInput.value.trim().replace(/\s+/g, " ");
+  if (name.length < 2) {
+    showLoginError("Inserisci un nome di almeno 2 caratteri.");
     return;
   }
-  currentUser = data.user;
-  els.passwordInput.value = "";
-  els.loginError.hidden = true;
-  await unlockReader();
-}
-
-async function handleRegister() {
-  const { data, error } = await supabase.auth.signUp({
-    email: els.usernameInput.value.trim(),
-    password: els.passwordInput.value,
-  });
-  if (error) {
-    showLoginError(error.message);
-    return;
-  }
-  if (!data.session) {
-    showLoginError("Controlla la tua email per confermare l'account.");
-    return;
-  }
-  currentUser = data.user;
+  currentProfileName = name;
+  localStorage.setItem("manga-profile-name", name);
   els.loginError.hidden = true;
   await unlockReader();
 }
@@ -255,7 +228,7 @@ async function loadBookmark(chapterId) {
   const { data, error } = await supabase
     .from("bookmarks")
     .select("chapter_id,page_index")
-    .eq("user_id", currentUser.id)
+    .eq("profile_name", currentProfileName)
     .eq("manga_id", currentManga.id)
     .maybeSingle();
   if (error) {
@@ -274,7 +247,7 @@ async function saveBookmark() {
     return distance < nearest.distance ? { index, distance } : nearest;
   }, { index: 0, distance: Infinity }).index;
   const { error } = await supabase.from("bookmarks").upsert({
-    user_id: currentUser.id,
+    profile_name: currentProfileName,
     manga_id: currentManga.id,
     chapter_id: els.chapterSelect.value,
     page_index: pageIndex,
