@@ -4,39 +4,36 @@ Sito statico per leggere webtoon online tramite GitHub Pages.
 
 ## Accesso e segnalibri sincronizzati
 
-L'accesso usa solo un nome account e i segnalibri usano Supabase, così lo stesso nome
-funziona su più telefoni. Non è una password: chiunque usi lo stesso nome vede e modifica
-quei segnalibri.
+L'accesso e i segnalibri usano Supabase, così lo stesso account funziona su più telefoni.
 La chiave `anon` di Supabase è pubblica e può stare nel sito; non inserire mai la `service_role`.
 
 1. Crea un progetto su [Supabase](https://supabase.com/).
 2. Copia `supabase-config.example.js` in `supabase-config.js` e inserisci URL e chiave `anon`.
-3. In Supabase vai su **SQL Editor** ed esegui questo script. Ricrea la tabella precedente,
-   quindi usalo solo se non ti servono i vecchi segnalibri:
+3. In Supabase vai su **SQL Editor** ed esegui:
 
 ```sql
-drop table if exists public.bookmarks;
-
 create table public.bookmarks (
-  profile_name text not null check (char_length(profile_name) between 2 and 40),
+  user_id uuid not null references auth.users(id) on delete cascade,
   manga_id text not null,
   chapter_id text not null,
   page_index integer not null check (page_index >= 0),
   updated_at timestamptz not null default now(),
-  primary key (profile_name, manga_id)
+  primary key (user_id, manga_id)
 );
 
 alter table public.bookmarks enable row level security;
 
-create policy "Anyone can read bookmarks"
-  on public.bookmarks for select to anon using (true);
-create policy "Anyone can create bookmarks"
-  on public.bookmarks for insert to anon with check (true);
-create policy "Anyone can update bookmarks"
-  on public.bookmarks for update to anon using (true) with check (true);
+create policy "Users can read their bookmark"
+  on public.bookmarks for select using (auth.uid() = user_id);
+create policy "Users can create their bookmark"
+  on public.bookmarks for insert with check (auth.uid() = user_id);
+create policy "Users can update their bookmark"
+  on public.bookmarks for update using (auth.uid() = user_id)
+  with check (auth.uid() = user_id);
 ```
 
-4. Pubblica anche `supabase-config.js` insieme al sito. Gli utenti entrano con il loro nome.
+4. Pubblica anche `supabase-config.js` insieme al sito. Gli utenti possono registrarsi
+   con email e password dal pulsante **Crea account**.
 
 ## Aggiungere immagini
 
