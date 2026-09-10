@@ -14,6 +14,7 @@ const els = {
   emptyState: document.querySelector("#emptyState"),
   fitBtn: document.querySelector("#fitBtn"),
   themeBtn: document.querySelector("#themeBtn"),
+  bookmarkBtn: document.querySelector("#bookmarkBtn"),
   logoutBtn: document.querySelector("#logoutBtn"),
   topBtn: document.querySelector("#topBtn"),
   progressBar: document.querySelector("#progressBar"),
@@ -87,6 +88,7 @@ function bindEvents() {
     localStorage.setItem("manga-theme", document.documentElement.classList.contains("light") ? "light" : "dark");
   });
 
+  els.bookmarkBtn.addEventListener("click", saveBookmark);
   els.topBtn.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
   window.addEventListener("scroll", updateProgress, { passive: true });
 }
@@ -159,6 +161,7 @@ function renderLibrary() {
   els.libraryView.hidden = false;
   els.chapterSelect.hidden = true;
   els.libraryBtn.hidden = true;
+  els.bookmarkBtn.hidden = true;
   els.chapterMeta.textContent = `${mangaList.length} manga disponibili`;
   els.libraryView.innerHTML = "";
 
@@ -203,6 +206,7 @@ function openManga(mangaId, requestedChapter) {
   els.libraryView.hidden = true;
   els.chapterSelect.hidden = false;
   els.libraryBtn.hidden = false;
+  els.bookmarkBtn.hidden = false;
   els.chapterSelect.innerHTML = "";
   manga.chapters.forEach((chapter) => {
     const option = document.createElement("option");
@@ -242,6 +246,38 @@ function renderChapter(chapterId) {
 
   window.scrollTo({ top: 0 });
   updateProgress();
+  restoreBookmark(chapterId);
+}
+
+function getBookmarkKey(chapterId) {
+  return `manga-bookmark:${currentManga.id}:${chapterId}`;
+}
+
+function saveBookmark() {
+  const chapterId = els.chapterSelect.value;
+  const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+  const position = scrollable <= 0 ? 0 : Math.min(1, Math.max(0, window.scrollY / scrollable));
+  localStorage.setItem(getBookmarkKey(chapterId), String(position));
+  els.bookmarkBtn.textContent = "Salvato";
+  window.setTimeout(() => {
+    els.bookmarkBtn.textContent = "Segnalibro";
+  }, 1400);
+}
+
+function restoreBookmark(chapterId) {
+  const savedPosition = Number(localStorage.getItem(getBookmarkKey(chapterId)));
+  if (!Number.isFinite(savedPosition)) return;
+
+  const restore = () => {
+    const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+    window.scrollTo({ top: Math.max(0, savedPosition * scrollable), behavior: "auto" });
+    updateProgress();
+  };
+
+  window.setTimeout(restore, 100);
+  els.reader.querySelectorAll("img").forEach((image) => {
+    image.addEventListener("load", restore, { once: true });
+  });
 }
 
 function showEmpty(message) {
