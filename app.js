@@ -191,8 +191,12 @@ function renderChapter(chapterId) {
     img.className = "page";
     img.src = src;
     img.alt = `${chapter.title} - pagina ${index + 1}`;
-    img.loading = index < 2 ? "eager" : "lazy";
+    img.loading = index < 8 ? "eager" : "lazy";
     img.decoding = "async";
+    img.addEventListener("error", () => {
+      img.alt = `${chapter.title} - pagina ${index + 1} non disponibile`;
+      img.classList.add("pageError");
+    });
     els.reader.append(img);
   });
 
@@ -220,16 +224,11 @@ function restoreBookmark(chapterId) {
   const savedPosition = Number(localStorage.getItem(getBookmarkKey(chapterId)));
   if (!Number.isFinite(savedPosition)) return;
 
-  const restore = () => {
+  window.setTimeout(() => {
     const scrollable = document.documentElement.scrollHeight - window.innerHeight;
     window.scrollTo({ top: Math.max(0, savedPosition * scrollable), behavior: "auto" });
     updateProgress();
-  };
-
-  window.setTimeout(restore, 100);
-  els.reader.querySelectorAll("img").forEach((image) => {
-    image.addEventListener("load", restore, { once: true });
-  });
+  }, 250);
 }
 
 function showEmpty(message) {

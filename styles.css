@@ -253,6 +253,12 @@ main {
   background: #0b0c0e;
 }
 
+.pageError {
+  min-height: 180px;
+  border: 2px solid var(--accent);
+  object-fit: contain;
+}
+
 .page + .page {
   margin-top: 0;
 }
