@@ -14,20 +14,11 @@
       <form id="loginForm" class="loginBox">
         <span class="mark loginMark">M</span>
         <h1>Accesso lettura</h1>
-        <p>Accedi per sincronizzare letture e segnalibri su tutti i tuoi dispositivi.</p>
-        <label for="usernameInput">Email</label>
-        <input id="usernameInput" name="username" type="email" autocomplete="username" required />
-        <label for="passwordInput">Password</label>
-        <input
-          id="passwordInput"
-          name="password"
-          type="password"
-          autocomplete="current-password"
-          required
-        />
+        <p>Scegli il tuo nome per sincronizzare i segnalibri su tutti i tuoi dispositivi.</p>
+        <label for="usernameInput">Nome account</label>
+        <input id="usernameInput" name="username" type="text" autocomplete="nickname" maxlength="40" required />
         <button type="submit">Entra</button>
-        <button id="registerBtn" type="button">Crea account</button>
-        <p id="loginError" class="loginError" role="alert" hidden>Credenziali non valide.</p>
+        <p id="loginError" class="loginError" role="alert" hidden></p>
       </form>
     </section>
 
