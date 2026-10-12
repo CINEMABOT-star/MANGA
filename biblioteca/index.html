@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f4f0e6">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="referrer" content="no-referrer">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; font-src 'self'; img-src 'self' data: blob:; connect-src 'self' https://api.github.com https://raw.githubusercontent.com; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <title>La tua biblioteca · Carica un libro</title>
+  <link rel="stylesheet" href="stile.css">
+  <link rel="icon" href="icona.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icona.png">
+  <link rel="manifest" href="app.webmanifest">
+  <script src="libro.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <header class="topbar"><a href="./" class="brand"><img src="icona.svg" alt="" width="32" height="32"> La tua biblioteca</a><span class="tag">PER IL TUO E-INK</span></header>
+  <main>
+    <section class="intro"><p class="eyebrow">DAL TELEFONO AL LETTORE</p><h1>La prossima lettura<br>comincia qui.</h1><p>Un file di testo diventa un libro da portare con te.<br class="desktop"> Scegli il TXT, guarda le pagine e aggiungilo alla biblioteca.</p></section>
+    <div class="workspace">
+      <div class="editor">
+        <section class="card" aria-labelledby="choose-heading">
+          <div class="step"><span>01</span><h2 id="choose-heading">Scegli il tuo libro</h2></div>
+          <label class="file-picker" for="file"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V4m-4 4 4-4 4 4M4 16v4h16v-4"/></svg><strong id="filename">Scegli un file TXT</strong><span id="filehint">Su iPhone puoi aprirlo dall’app File · massimo 20 MB</span><input id="file" type="file" accept=".txt,text/plain"></label>
+          <div class="field"><label for="title">Titolo</label><input id="title" type="text" maxlength="150" placeholder="Come si chiama il libro?" autocomplete="off"></div>
+          <div class="field"><label for="author">Autore <span>facoltativo</span></label><input id="author" type="text" maxlength="120" placeholder="Nome dell’autore" autocomplete="off"></div>
+          <div class="settings"><div class="field"><label for="size">Dimensione delle lettere</label><select id="size"><option value="16">Piccole · 16</option><option value="18" selected>Medie · 18</option><option value="20">Grandi · 20</option><option value="22">Molto grandi · 22</option></select></div><div class="field"><label for="part">Pagine per parte</label><select id="part"><option value="50">50 pagine</option><option value="100">100 pagine</option><option value="200">200 pagine</option></select></div></div>
+          <label class="check"><input id="breaks" type="checkbox"> Mantieni ogni a capo <span>per poesie e versi</span></label>
+          <button id="prepare" class="button secondary" type="button" disabled>Prepara anteprima <span aria-hidden="true">→</span></button>
+          <p class="inline-error" id="error" role="alert" hidden></p>
+        </section>
+        <section class="card" aria-labelledby="publish-heading">
+          <div class="step"><span>02</span><h2 id="publish-heading">Aggiungilo alla biblioteca</h2></div>
+          <div class="connection"><span class="dot" id="dot"></span><span id="account">GitHub da collegare</span><button id="disconnect" class="text-button" type="button" hidden>Scollega</button></div>
+          <details id="access"><summary>Collega il tuo GitHub</summary><p>Per pubblicare usa una chiave dedicata al repository <strong>CINEMABOT-star/MANGA</strong>. L’anteprima funziona anche senza accesso.</p><ol><li><a id="token-link" href="https://github.com/settings/personal-access-tokens/new?name=Biblioteca%20E-Ink&amp;target_name=CINEMABOT-star&amp;expires_in=90&amp;contents=write" target="_blank" rel="noopener noreferrer">Apri la creazione della chiave su GitHub ↗</a></li><li>In <strong>Repository access</strong> scegli <strong>Only select repositories</strong> e seleziona <strong>MANGA</strong>.</li><li>Controlla <strong>Contents: Read and write</strong>, premi <strong>Generate token</strong> e incolla la chiave qui.</li></ol><label for="token" class="sr-only">Chiave GitHub</label><div class="token-row"><input id="token" type="password" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="github_pat_…"><button id="connect" class="button compact" type="button">Collega</button></div><p class="note">La chiave resta solo in memoria in questa pagina. Dopo una ricarica dovrai inserirla di nuovo.</p></details>
+          <button id="publish" class="button primary" type="button" disabled>Pubblica sul mio sito <span aria-hidden="true">↗</span></button>
+          <p class="note">Il TXT e le pagine saranno aggiunti al tuo repository pubblico.</p>
+          <div class="status-box" id="status-box" hidden><p id="status" role="status" aria-live="polite"></p><progress id="progress" hidden></progress><a id="run-link" target="_blank" rel="noopener noreferrer" hidden>Segui la preparazione su GitHub ↗</a><button id="check-status" class="text-button" type="button" hidden>Controlla di nuovo</button></div>
+        </section>
+      </div>
+      <aside class="preview-panel" aria-labelledby="preview-heading"><div class="preview-header"><span class="eyebrow">UNO SGUARDO AL LIBRO</span><h2 id="preview-heading">Come sul tuo schermo.</h2></div><div class="device"><div class="screen"><canvas id="preview" width="280" height="460" aria-label="Anteprima della pagina del libro"></canvas><div id="placeholder"><img src="icona.svg" alt="" width="52" height="52"><p>Le tue parole,<br>una pagina alla volta.</p></div></div><div class="device-label">E-INK · 280 × 480</div></div><div class="navigation"><button id="previous" type="button" aria-label="Pagina precedente" disabled>←</button><span id="page-label">Anteprima</span><button id="next" type="button" aria-label="Pagina successiva" disabled>→</button></div><p id="summary" class="preview-note">Testo nitido, schermo verticale.<br>Ogni parte si scarica dal lettore.</p><p class="preview-note small">L’anteprima è indicativa. GitHub prepara e verifica le pagine definitive.</p></aside>
+    </div>
+    <section class="after"><div class="after-icon" aria-hidden="true">✓</div><div><h2>E poi, sul lettore?</h2><p>Scegli <strong>Aggiorna catalogo</strong>, apri il libro e scarica una parte. Quando è scaricata puoi leggerla anche offline. Questa pagina di caricamento resta separata dal reader.</p></div></section>
+  </main>
+  <footer><span>La tua biblioteca, ovunque.</span><span>Puoi aggiungere questa pagina alla schermata Home dell’iPhone: Condividi → Aggiungi alla schermata Home.</span></footer>
+</body>
+</html>
